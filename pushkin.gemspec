@@ -8,8 +8,8 @@ Gem::Specification.new do |s|
   s.authors     = ["Ross Kaffenberger"]
   s.email       = ["rosskaff@gmail.com"]
   s.homepage    = ""
-  s.summary     = %q{TODO: Write a gem summary}
-  s.description = %q{TODO: Write a gem description}
+  s.summary     = %q{Pub/Sub for Rails with Faye}
+  s.description = %q{Pub/Sub for Rails with Faye based on PrivatePub}
 
   s.rubyforge_project = "pushkin"
 
@@ -21,6 +21,7 @@ Gem::Specification.new do |s|
   # specify any dependencies here; for example:
   # s.add_development_dependency "rspec"
   # s.add_runtime_dependency "rest-client"
+  s.add_dependency "rake"
   s.add_dependency "faye"
   s.add_dependency "faraday", "0.8.0.rc2"
   s.add_dependency "faraday_middleware"
