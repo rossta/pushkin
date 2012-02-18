@@ -1,0 +1,9 @@
+src_files:
+  - "pushkin.js"
+helpers:
+  - helpers/**/*
+spec_files:
+  - "**/*spec.*"
+src_dir:
+  - app/assets/javascripts
+spec_dir: spec/javascripts
