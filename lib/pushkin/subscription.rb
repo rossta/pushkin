@@ -42,7 +42,7 @@ module Pushkin
       @timestamp ||= (Time.now.to_f * 1000).round
     end
 
-    def to_hash
+    def to_json
       {
         server: server,
         timestamp: timestamp,

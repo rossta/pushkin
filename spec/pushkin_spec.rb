@@ -28,6 +28,50 @@ describe Pushkin do
     Pushkin.server.should be_kind_of(Faye::RackAdapter)
   end
 
+  it "includes channel, server, and custom time in subscription" do
+    Pushkin.configure { |c| c.host = 'localhost'; c.endpoint = '/faye' }
+    subscription = Pushkin.subscription(:timestamp => 123, :channel => "hello")
+    subscription[:timestamp].should eq(123)
+    subscription[:channel].should == "hello"
+    subscription[:server].should == 'localhost/faye'
+  end
+
+  it "does a sha1 digest of channel, timestamp, and secret token" do
+    Pushkin.configure { |c| c.secret_token = 'token' }
+    subscription = Pushkin.subscription(:timestamp => 123, :channel => "channel")
+    subscription[:signature].should == Digest::SHA1.hexdigest("tokenchannel123")
+  end
+
+  it "formats a message hash given a channel and a string for eval" do
+    Pushkin.configure { |c| c.secret_token = "token" }
+    Pushkin.message("chan", "foo").should eq(
+      :ext => {:pushkin_token => "token"},
+      :channel => "chan",
+      :data => {
+        :channel => "chan",
+        :eval => "foo"
+      }
+    )
+  end
+
+  it "formats a message hash given a channel and a hash" do
+    Pushkin.configure { |c| c.secret_token = "token" }
+    Pushkin.message("chan", :foo => "bar").should eq(
+      :ext => {:pushkin_token => "token"},
+      :channel => "chan",
+      :data => {
+        :channel => "chan",
+        :data => {:foo => "bar"}
+      }
+    )
+  end
+
+  it "publish_to passes message to publish_message call" do
+    Pushkin.should_receive(:message).with("chan", "foo").and_return("message")
+    Pushkin.should_receive(:publish_message).with("message").and_return(:result)
+    Pushkin.publish_to("chan", "foo").should eq(:result)
+  end
+
   describe "configure" do
 
     it "has a server endpoint" do
@@ -64,21 +108,6 @@ describe Pushkin do
       Pushkin.host.should == 'server1'
       Pushkin.endpoint.should == '/foo'
     end
-  end
-
-
-  it "includes channel, server, and custom time in subscription" do
-    Pushkin.configure { |c| c.host = 'localhost'; c.endpoint = '/faye' }
-    subscription = Pushkin.subscription(:timestamp => 123, :channel => "hello")
-    subscription[:timestamp].should eq(123)
-    subscription[:channel].should == "hello"
-    subscription[:server].should == 'localhost/faye'
-  end
-
-  it "does a sha1 digest of channel, timestamp, and secret token" do
-    Pushkin.configure { |c| c.secret_token = 'token' }
-    subscription = Pushkin.subscription(:timestamp => 123, :channel => "channel")
-    subscription[:signature].should == Digest::SHA1.hexdigest("tokenchannel123")
   end
 
 end
