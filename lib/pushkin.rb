@@ -3,6 +3,7 @@ require "pushkin/configuration"
 require "pushkin/subscription"
 require "pushkin/message"
 require "pushkin/faye/authentication"
+require "pushkin/engine" if defined? Rails
 
 module Pushkin
   extend self

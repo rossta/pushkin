@@ -4,5 +4,5 @@ require "yaml"
 require "faye"
 require "pushkin"
 
-Pushkin.configure(File.expand_path("../config/pushkin.yml", __FILE__)[ENV["RAILS_ENV"] || "development"])
+Pushkin.configure(YAML.load_file(File.expand_path("../config/pushkin.yml", __FILE__))[ENV["RAILS_ENV"] || "development"])
 run Pushkin.server
