@@ -1,0 +1,5 @@
+rvm:
+  - 1.9.2
+  - ree
+
+gemfile: Gemfile.ci
