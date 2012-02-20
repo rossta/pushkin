@@ -9,6 +9,8 @@ RSpec::Core::RakeTask.new do |t|
 end
 
 require 'jasmine-headless-webkit'
-Jasmine::Headless::Task.new
+Jasmine::Headless::Task.new do |t|
+  t.colors = true
+end
 
 task :default => [:spec, "jasmine:headless"]
