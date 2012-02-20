@@ -30,7 +30,7 @@ class Pushkin
     @fayeClient.addExtension(@fayeExtension())
     callback(@fayeClient) for callback in @fayeCallbacks
 
-  handleResponse: (message) ->
+  handleResponse: (message) =>
     eval(message.eval) if message.eval
     if (callback = @subscriptionCallbacks[message.channel])
       callback(message.data, message.channel)

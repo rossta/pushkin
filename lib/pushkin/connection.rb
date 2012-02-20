@@ -30,7 +30,7 @@ module Pushkin
       URI.parse(@url)
     end
 
-    def post(*args)
+    def deliver(*args)
       faraday.post(endpoint, *args)
     end
 

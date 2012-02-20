@@ -15,7 +15,7 @@ describe Pushkin::Connection do
       end
     end
     connection.stub!(:faraday => faraday)
-    connection.post("message_json").body.should == 'result'
+    connection.deliver("message_json").body.should == 'result'
   end
 
 end

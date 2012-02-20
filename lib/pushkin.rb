@@ -43,7 +43,7 @@ module Pushkin
   end
 
   def publish_message(message)
-    response = connection.post(endpoint, message)
+    response = connection.deliver(message)
     response.body
   end
 

@@ -7,7 +7,7 @@ describe Pushkin do
 
   it "publishes message as json to server using Faraday" do
     connection = mock('Connection', :endpoint => '/faye')
-    connection.should_receive(:post).with('/faye', 'message_json').and_return(mock(:body => 'result'))
+    connection.should_receive(:deliver).with('message_json').and_return(mock(:body => 'result'))
     Pushkin.stub!(:connection => connection)
     Pushkin.publish_message("message_json").should == 'result'
   end
