@@ -5,8 +5,7 @@ require "faye"
 require "pushkin"
 
 Pushkin.configure do |config|
-  config.host         = "http://localhost:9292"
-  config.endpoint     = "/faye"
+  config.url          = "http://localhost:9292/faye"
   config.secret_token = "secret"
 end
 

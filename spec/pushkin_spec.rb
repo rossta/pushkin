@@ -93,14 +93,14 @@ describe Pushkin do
     end
 
     it "accepts hash" do
-      Pushkin.configure url: 'http://localhost:9292/faye'
+      Pushkin.configure :url => 'http://localhost:9292/faye'
       Pushkin.url.should == 'http://localhost:9292/faye'
       Pushkin.host.should == 'http://localhost:9292'
       Pushkin.endpoint.should == '/faye'
     end
 
     it "block settings take precedence" do
-      Pushkin.configure url: 'http://localhost:9292/faye' do |config|
+      Pushkin.configure :url => 'http://localhost:9292/faye' do |config|
         config.url = 'http://localhost:2929/foobar'
         config.endpoint = '/foo'
       end

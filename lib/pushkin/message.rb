@@ -6,9 +6,9 @@ module Pushkin
 
     def to_hash
       {
-        channel: @channel,
-        data: { channel: @channel },
-        ext:  { pushkin_token: Pushkin.secret_token }
+        :channel => @channel,
+        :data => { :channel => @channel },
+        :ext => { :pushkin_token => Pushkin.secret_token }
       }.tap do |json|
         if @data.kind_of? String
           json[:data][:eval] = @data

@@ -17,8 +17,8 @@ module Pushkin
         timestamp = message["ext"]["pushkin_timestamp"]
 
         subscription = Pushkin::Subscription.new \
-          channel: message["subscription"],
-          timestamp: timestamp
+          :channel => message["subscription"],
+          :timestamp => timestamp
 
         if signature != subscription.signature
           message["error"] = "Incorrect signature."

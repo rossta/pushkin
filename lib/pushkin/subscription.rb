@@ -31,10 +31,10 @@ module Pushkin
 
     def to_hash
       {
-        url: url,
-        timestamp: timestamp,
-        channel: channel,
-        signature: signature
+        :url => url,
+        :timestamp => timestamp,
+        :channel => channel,
+        :signature => signature
       }
     end
 

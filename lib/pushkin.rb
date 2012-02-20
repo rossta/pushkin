@@ -16,7 +16,7 @@ module Pushkin
     @connection ||= Connection.new(url)
   end
 
-  delegate :host, :endpoint, to: :connection
+  delegate :host, :endpoint, :to => :connection
 
   def reset!
     @configuration = nil
@@ -34,7 +34,7 @@ module Pushkin
     Configuration.configure &block if block_given?
   end
 
-  delegate :url, :secret_token, :signature_expiration, to: :config
+  delegate :url, :secret_token, :signature_expiration, :to => :config
 
   # Publish the given data to a specific channel. This ends up sending
   # a Net::HTTP POST request to the Faye server.
