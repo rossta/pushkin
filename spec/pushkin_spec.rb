@@ -10,30 +10,23 @@ describe Pushkin do
   end
 
   it "publishes message as json to server using Faraday" do
-    Pushkin.configure { |c| c.endpoint = '/faye' }
-    connection = Faraday.new do |builder|
-      builder.adapter :test do |stub|
-        stub.post('/faye', "message_json") { [200, {}, 'result'] }
-      end
-    end
+    connection = mock('Connection', :endpoint => '/faye')
+    connection.should_receive(:post).with('/faye', 'message_json').and_return(mock(:body => 'result'))
     Pushkin.stub!(:connection => connection)
     Pushkin.publish_message("message_json").should == 'result'
   end
 
-  it "has a Faraday connection instance" do
-    Pushkin.connection.should be_kind_of(Faraday::Connection)
-  end
-
   it "has a Faye rack app instance" do
+    Pushkin.configure { |c| c.url = 'http://localhost:9292/faye'}
     Pushkin.server.should be_kind_of(Faye::RackAdapter)
   end
 
   it "includes channel, server, and custom time in subscription" do
-    Pushkin.configure { |c| c.host = 'localhost'; c.endpoint = '/faye' }
+    Pushkin.configure { |c| c.url = 'localhost/faye' }
     subscription = Pushkin.subscription(:timestamp => 123, :channel => "hello")
     subscription[:timestamp].should eq(123)
     subscription[:channel].should == "hello"
-    subscription[:server].should == 'localhost/faye'
+    subscription[:url].should == 'localhost/faye'
   end
 
   it "does a sha1 digest of channel, timestamp, and secret token" do
@@ -74,14 +67,19 @@ describe Pushkin do
 
   describe "configure" do
 
-    it "has a server endpoint" do
-      Pushkin.configure { |c| c.endpoint = '/faye' }
+    it "has a server url" do
+      Pushkin.configure { |c| c.url = 'http://localhost:9292/faye' }
+      Pushkin.url.should == 'http://localhost:9292/faye'
+    end
+
+    it "has a server endpoin" do
+      Pushkin.configure { |c| c.url = 'http://localhost:9292/faye' }
       Pushkin.endpoint.should == '/faye'
     end
 
     it "has a host" do
-      Pushkin.configure { |c| c.host = 'server' }
-      Pushkin.host.should == 'server'
+      Pushkin.configure { |c| c.url = 'http://localhost:9292/faye' }
+      Pushkin.host.should == 'http://localhost:9292'
     end
 
     it "has a secret token" do
@@ -95,18 +93,20 @@ describe Pushkin do
     end
 
     it "accepts hash" do
-      Pushkin.configure host: 'server', endpoint: '/faye'
-      Pushkin.host.should == 'server'
+      Pushkin.configure url: 'http://localhost:9292/faye'
+      Pushkin.url.should == 'http://localhost:9292/faye'
+      Pushkin.host.should == 'http://localhost:9292'
       Pushkin.endpoint.should == '/faye'
     end
 
     it "block settings take precedence" do
-      Pushkin.configure host: 'server', endpoint: '/faye' do |config|
-        config.host = 'server1'
+      Pushkin.configure url: 'http://localhost:9292/faye' do |config|
+        config.url = 'http://localhost:2929/foobar'
         config.endpoint = '/foo'
       end
-      Pushkin.host.should == 'server1'
-      Pushkin.endpoint.should == '/foo'
+      Pushkin.url.should == 'http://localhost:2929/foobar'
+      Pushkin.host.should == 'http://localhost:2929'
+      Pushkin.endpoint.should == '/foobar'
     end
   end
 

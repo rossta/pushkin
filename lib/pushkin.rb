@@ -1,5 +1,9 @@
+require 'faye'
+require 'faraday'
+require 'faraday_middleware'
 require "pushkin/version"
 require "pushkin/configuration"
+require "pushkin/connection"
 require "pushkin/subscription"
 require "pushkin/message"
 require "pushkin/faye/authentication"
@@ -9,20 +13,14 @@ module Pushkin
   extend self
 
   def connection
-    @connection ||= begin
-      Faraday.new host do |conn|
-        conn.request :json
-
-        conn.response :logger # log the request to STDOUT
-        conn.response :json,  :content_type => /\bjson$/
-
-        conn.adapter Faraday.default_adapter
-      end
-    end
+    @connection ||= Connection.new(url)
   end
+
+  delegate :host, :endpoint, to: :connection
 
   def reset!
     @configuration = nil
+    @connection = nil
   end
 
   def config
@@ -36,7 +34,7 @@ module Pushkin
     Configuration.configure &block if block_given?
   end
 
-  delegate :host, :endpoint, :secret_token, :signature_expiration, to: :config
+  delegate :url, :secret_token, :signature_expiration, to: :config
 
   # Publish the given data to a specific channel. This ends up sending
   # a Net::HTTP POST request to the Faye server.
@@ -50,13 +48,13 @@ module Pushkin
   end
 
   def message(channel, data)
-    Message.new(channel, data).to_json
+    Message.new(channel, data).to_hash
   end
 
   # Returns a subscription hash to pass to the Pushkin.sign call in JavaScript.
   # Any options passed are merged to the hash.
   def subscription(options = {})
-    Subscription.new(options).to_json
+    Subscription.new(options.merge(:url => url)).to_hash
   end
 
   # Returns the Faye Rack application.

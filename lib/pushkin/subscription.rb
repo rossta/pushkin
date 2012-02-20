@@ -1,12 +1,11 @@
 module Pushkin
   class Subscription
-    attr_accessor :host, :endpoint, :channel, :timestamp
+    attr_accessor :url, :channel, :timestamp
 
     def initialize(options = {})
-      @timestamp    = options[:timestamp]
-      @host         = options[:host]
-      @endpoint     = options[:endpoint]
-      @channel      = options[:channel]
+      @url       = options[:url]
+      @timestamp = options[:timestamp]
+      @channel   = options[:channel]
     end
 
     def signature
@@ -26,25 +25,13 @@ module Pushkin
       Pushkin.secret_token
     end
 
-    def endpoint
-      @endpoint ||= Pushkin.endpoint
-    end
-
-    def host
-      @host ||= Pushkin.host
-    end
-
-    def server
-      host + endpoint
-    end
-
     def timestamp
       @timestamp ||= (Time.now.to_f * 1000).round
     end
 
-    def to_json
+    def to_hash
       {
-        server: server,
+        url: url,
         timestamp: timestamp,
         channel: channel,
         signature: signature

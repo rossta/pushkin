@@ -54,14 +54,14 @@ describe "Pushkin", ->
       faye =
         subscribe: jasmine.createSpy()
       subscription =
-        server: "server"
+        url: "url"
         channel: "somechannel"
 
       spyOn(pushkin, 'faye').andCallFake((callback) -> callback(faye))
 
       pushkin.sign(subscription)
       expect(faye.subscribe).toHaveBeenCalledWith "somechannel", pushkin.handleResponse
-      expect(pushkin.server).toEqual "server"
+      expect(pushkin.url).toEqual "url"
       expect(pushkin.subscriptions.somechannel).toEqual subscription
 
     it "adds a faye subscription with response handler when signing", ->
@@ -69,13 +69,13 @@ describe "Pushkin", ->
         subscribe: jasmine.createSpy()
 
       options =
-        server: "server"
+        url: "url"
         channel: "somechannel"
 
       spyOn(pushkin, 'faye').andCallFake((callback) -> callback(faye))
       pushkin.sign(options)
       expect(faye.subscribe).toHaveBeenCalledWith "somechannel", pushkin.handleResponse
-      expect(pushkin.server).toEqual "server"
+      expect(pushkin.url).toEqual "url"
       expect(pushkin.subscriptions.somechannel).toEqual options
 
     it "triggers faye callback function immediately when fayeClient is available", ->
@@ -86,18 +86,18 @@ describe "Pushkin", ->
       )
       expect(called).toBeTruthy()
 
-    it "adds fayeCallback when client and server aren't available", ->
+    it "adds fayeCallback when client and url aren't available", ->
       pushkin.faye "callback"
       expect(pushkin.fayeCallbacks[0]).toEqual "callback"
 
-    it "adds a script tag loading faye js when the server is present", ->
+    it "adds a script tag loading faye js when the url is present", ->
       script = {}
       doc.createElement = -> return script
       doc.documentElement =
         appendChild: jasmine.createSpy()
       spyOn(pushkin, "document").andReturn doc
 
-      pushkin.server = "path/to/faye"
+      pushkin.url = "path/to/faye"
       pushkin.faye("callback")
       expect(pushkin.fayeCallbacks[0]).toEqual "callback"
       expect(script.type).toEqual "text/javascript"
@@ -105,15 +105,15 @@ describe "Pushkin", ->
       expect(script.onload).toEqual pushkin.connectToFaye
       expect(doc.documentElement.appendChild).toHaveBeenCalledWith script
 
-    it "connects to faye server, adds extension, and executes callbacks", ->
+    it "connects to faye url, adds extension, and executes callbacks", ->
       callback = jasmine.createSpy()
       client =
         addExtension: jasmine.createSpy()
-      Faye.Client = (server) ->
-        expect(server).toEqual("server")
+      Faye.Client = (url) ->
+        expect(url).toEqual("url")
         client
 
-      pushkin.server = "server"
+      pushkin.url = "url"
       pushkin.fayeCallbacks.push(callback)
       pushkin.connectToFaye()
       expect(pushkin.fayeClient).toEqual client

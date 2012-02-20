@@ -3,8 +3,8 @@ module Pushkin
     def initialize(channel, data)
       @channel, @data = channel, data
     end
-    
-    def to_json
+
+    def to_hash
       {
         channel: @channel,
         data: { channel: @channel },

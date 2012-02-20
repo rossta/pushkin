@@ -13,20 +13,20 @@ class Pushkin
       callback(@fayeClient)
     else
       @fayeCallbacks.push(callback)
-      if (@server && !@connecting)
+      if (@url && !@connecting)
         @connecting = true
         doc = @document()
         script = doc.createElement("script")
         script.type   = "text/javascript"
-        script.src    = @server + ".js"
+        script.src    = @url + ".js"
         script.onload = @connectToFaye
         doc.documentElement.appendChild(script)
 
   fayeExtension: ->
     @fayeExtensionInstance ||= new FayeExtension(@subscriptions)
 
-  connectToFaye: ->
-    @fayeClient = new Faye.Client(@server)
+  connectToFaye: =>
+    @fayeClient = new Faye.Client(@url)
     @fayeClient.addExtension(@fayeExtension())
     callback(@fayeClient) for callback in @fayeCallbacks
 
@@ -36,13 +36,21 @@ class Pushkin
       callback(message.data, message.channel)
 
   sign: (subscription) ->
-    @server = subscription.server if !@server
+    @url = subscription.url if !@url
     @subscriptions[subscription.channel] = subscription
     @faye((faye) =>
       faye.subscribe(subscription.channel, @handleResponse)
     )
+    this
 
   document: -> window.document
+
+  @sign: (subscription) ->
+    @instance ||= new this()
+    @instance.sign(subscription)
+
+  @subscribe: (channel, callback) ->
+    @instance.subscribe(channel, callback)
 
 class FayeExtension
   constructor: (@subscriptions) ->
