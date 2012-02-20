@@ -1,5 +1,6 @@
+require 'rake'
+require 'bundler/setup'
 require "bundler/gem_tasks"
-Bundler::GemHelper.install_tasks
 require 'rspec/core/rake_task'
 
 desc "Run RSpec"
