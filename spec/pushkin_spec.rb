@@ -5,10 +5,6 @@ describe Pushkin do
     Pushkin.reset!
   end
 
-  it "is version 0.0.1" do
-    Pushkin::VERSION.should == '0.0.1'
-  end
-
   it "publishes message as json to server using Faraday" do
     connection = mock('Connection', :endpoint => '/faye')
     connection.should_receive(:post).with('/faye', 'message_json').and_return(mock(:body => 'result'))
