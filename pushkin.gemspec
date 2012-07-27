@@ -22,7 +22,7 @@ Gem::Specification.new do |s|
   # s.add_development_dependency "rspec"
   # s.add_runtime_dependency "rest-client"
   s.add_dependency "faye"
-  s.add_dependency "faraday", "0.8.0.rc2"
+  s.add_dependency "faraday", "0.8.1"
   s.add_dependency "faraday_middleware"
   s.add_dependency "activesupport"
 
